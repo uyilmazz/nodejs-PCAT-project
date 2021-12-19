@@ -29,6 +29,11 @@ app.get('/about',(req,res) => {
     res.render('about');
 })
 
+app.get('/photos/:id',async(req,res) => {
+    const photo = await Photo.findById(req.params.id);
+    res.render('photo',{photo});
+});
+
 app.get('/addPhoto',(req,res) => {
     res.render('addPhoto');
 });
@@ -37,6 +42,7 @@ app.post('/photos',async (req,res) => {
     await Photo.create(req.body);
     res.redirect('/');
 });
+
 
 const port = 3000;
 app.listen(port,()=>{
