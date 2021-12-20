@@ -2,8 +2,22 @@ const Photo = require('../models/Photo');
 const fs = require('fs');
 
 const getAllPhotos = async (req, res) => {
-    const photos = await Photo.find();
-    res.render('index', { photos });
+
+    //console.log(req.query.page);
+    const page = req.query.page || 1;
+    const totalPhoto = await Photo.find().countDocuments();
+    const photosPerPage = 2; 
+
+    const photos = await Photo.find()
+    //.sort('-createdAt')
+    .skip((page -1 ) * photosPerPage)
+    .limit(photosPerPage);
+
+    res.render('index', { 
+        photos,
+        currentPage : page,
+        totalPage: Math.ceil(totalPhoto / photosPerPage)
+    });
 }
 
 const getPhoto = async (req, res) => {
@@ -13,7 +27,6 @@ const getPhoto = async (req, res) => {
 
 const addPhoto = async (req, res) => {
 
-    console.log('add photo inside');
     const uploadFolder = 'public/uploads';
 
     if (!fs.existsSync(uploadFolder)) {
